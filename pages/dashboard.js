@@ -14,7 +14,8 @@ import {
   Button,
   Typography,
   Alert,
-  AlertTitle
+  AlertTitle,
+  MenuItem
 } from "@mui/material";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -28,6 +29,13 @@ let intialLeave = {
   leave_end_date: "",
   description: "",
 };
+
+const leaveTypes = [
+  {type: "SICK_LEAVE"},
+  {type: "CASUAL_LEAVE"},
+  {type: "PATERNITY_LEAVE"},
+  {type: "MATERNITY_LEAVE"}
+]
 
 const dashboard = () => {
   const [open, setOpen] = React.useState(false);
@@ -134,11 +142,11 @@ const dashboard = () => {
       <ToastContainer />
       <Box
         component="main"
+        className="card"
         style={{
           width: "100%",
-          marginTop: "2rem",
+          marginTop: "0rem",
           background: "#eee",
-          height: "100vh",
         }}
         container
         spacing={2}
@@ -183,20 +191,24 @@ const dashboard = () => {
         <DialogTitle>Leave Request</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            To subscribe to this website, please enter your email address here.
-            We will send updates occasionally.
+            Leave Request to HR manager
           </DialogContentText>
           <TextField
-            autoFocus
-            margin="dense"
-            name="leave_type"
             id="leave_type"
-            label="Leave type"
-            onChange={handleOnChange}
-            type="text"
+            select
             fullWidth
+            label="Leave Type"
+            name="leave_type"
+            onChange={handleOnChange}
+            helperText="Select leave type"
             variant="standard"
-          />
+          >
+            {leaveTypes.map((option) => (
+              <MenuItem key={option.type} value={option.type}>
+                {option.type}
+              </MenuItem>
+            ))}
+            </TextField>
           <TextField
             autoFocus
             disabled

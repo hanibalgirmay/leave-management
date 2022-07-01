@@ -32,7 +32,11 @@ export default function Home() {
           toast(res.data.message, { className: "toast-error" });
         }
         localStorage.setItem("leave-mng", JSON.stringify(res.data));
-        router.push("/dashboard");
+        if(res.data.role == "EMPLOYEE"){
+          router.push("/dashboard");
+        } else{
+          router.push("/hr/index");
+        }
 
         setLoading(false);
       })
@@ -52,7 +56,7 @@ export default function Home() {
       <ToastContainer />
       <main className={styles.main}>
         <div className="container">
-          <div className="form">
+          <div className="form login">
             <div className="input-field">
               <label for="username">Username</label>
               <input

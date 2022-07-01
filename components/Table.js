@@ -79,10 +79,34 @@ export default function DataGridDemo({ columns, data }) {
       />
       <Dialog open={dialog} onClose={handleClose}>
         <DialogTitle>Update Leave</DialogTitle>
-        <DialogContent>
+        <DialogContent style={{display:'flex',flexDirection:'column',gap:'1rem'}}>
           <DialogContentText>
             Update Employee Leave request form
           </DialogContentText>
+          <TextField
+            fullWidth
+            label="Employee Name"
+            disabled
+            defaultValue={selectedData.employee && selectedData.employee.full_name}
+            name="leave_type" />
+          <TextField
+            fullWidth
+            disabled
+            label="Employee Gender"
+            defaultValue={selectedData.employee && selectedData.employee.gender}
+            name="leave_type" />
+          <TextField
+            fullWidth
+            disabled
+            label="Requested Number of leave"
+            defaultValue={selectedData.employee && selectedData.number_of_days}
+            name="leave_type" />
+          <TextField
+            fullWidth
+            disabled
+            label="Requested Start Date"
+            defaultValue={selectedData.employee && selectedData.leave_start_date}
+            name="leave_type" />
           <TextField
             id="status"
             select

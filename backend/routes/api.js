@@ -11,6 +11,12 @@ router.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
+/**
+ * @description user login
+ * @param {username, password}
+ * @access  Public
+ * @returns {object} - Leaves object
+ */
 router.post("/login", async (req, res, next) => {
   const { username, password } = req.body;
   const user = await prisma.user.findUnique({
@@ -29,6 +35,12 @@ router.post("/login", async (req, res, next) => {
   res.json({ ...user, accessToken });
 });
 
+/**
+ * @description register new employee
+ * @param {username, password}
+ * @access  Public
+ * @returns {object} - Leaves object
+ */
 router.post("/register", async (req, res, next) => {
   try {
     let { username, password } = req.body;
@@ -48,11 +60,24 @@ router.post("/register", async (req, res, next) => {
 });
 
 // =======================Leaves==============
+/**
+ * @description get all leaves from database
+ * @access  Public
+ * @returns [{object}] - Leaves object
+ */
 router.get("/leaves", async (req, res) => {
-  const _leaves = await prisma.leave.findMany({});
+  const _leaves = await prisma.leave.findMany({
+    include: { employee: true },
+  });
   return res.json(_leaves);
 });
 
+/**
+ * @description get leaves by id
+ * @param id
+ * @access  Public
+ * @returns {object} - Leaves object
+ */
 router.get("/leaves/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -60,7 +85,7 @@ router.get("/leaves/:id", async (req, res, next) => {
       where: {
         id: parseInt(id),
       },
-      // include: { category: true },
+      include: { employee: true },
     });
     res.json(_leave);
   } catch (error) {
@@ -68,6 +93,12 @@ router.get("/leaves/:id", async (req, res, next) => {
   }
 });
 
+/**
+ * @description get leaves of employee by employeeID
+ * @param id
+ * @access  Public
+ * @returns {object} - Leaves object
+ */
 router.get("/leaves/employee/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -83,6 +114,11 @@ router.get("/leaves/employee/:id", async (req, res, next) => {
   }
 });
 
+/**
+ * @description Create new Employee leaves
+ * @access  Public
+ * @returns {object} - Leaves object
+ */
 router.post("/leaves", async (req, res, next) => {
   try {
     const data = req.body;
@@ -96,6 +132,12 @@ router.post("/leaves", async (req, res, next) => {
   }
 });
 
+/**
+ * @description Update leaves status
+ * @param id
+ * @access  Public
+ * @returns {object} - Leaves object
+ */
 router.put("/leaves/status/:id", async (req, res, next) => {
   try {
     const { status } = req.body;
@@ -114,6 +156,11 @@ router.put("/leaves/status/:id", async (req, res, next) => {
   }
 });
 
+/**
+ * @description leaves update overall
+ * @access  Public
+ * @returns {object} - Leaves object
+ */
 router.patch("/leaves/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -130,6 +177,12 @@ router.patch("/leaves/:id", async (req, res, next) => {
   }
 });
 
+/**
+ * @description delete leaves request
+ * @param id
+ * @access  Public
+ * @returns {object} - Leaves object
+ */
 router.delete("/leaves/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -146,6 +199,11 @@ router.delete("/leaves/:id", async (req, res, next) => {
 });
 
 // =======================Employee==============
+/**
+ * @description Get all Employee
+ * @access  Public
+ * @returns [{object}] - Leaves array object
+ */
 router.get("/employee", async (req, res, next) => {
   try {
     const _allEmployess = await prisma.employee.findMany({
@@ -157,6 +215,12 @@ router.get("/employee", async (req, res, next) => {
   }
 });
 
+/**
+ * @description get employee by ID
+ * @param id
+ * @access  Public
+ * @returns {object} - Leaves object
+ */
 router.get("/employee/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -172,6 +236,11 @@ router.get("/employee/:id", async (req, res, next) => {
   }
 });
 
+/**
+ * @description create new employee
+ * @access  Public
+ * @returns {object} - Leaves object
+ */
 router.post("/employee", async (req, res, next) => {
   try {
     const data = req.body;
@@ -184,6 +253,12 @@ router.post("/employee", async (req, res, next) => {
   }
 });
 
+/**
+ * @description Update employee
+ * @param id
+ * @access  Public
+ * @returns {object} - Leaves object
+ */
 router.patch("/employee/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -200,6 +275,12 @@ router.patch("/employee/:id", async (req, res, next) => {
   }
 });
 
+/**
+ * @description delete employee
+ * @param id
+ * @access  Public
+ * @returns {object} - Leaves object
+ */
 router.delete("/employee/:id", async (req, res, next) => {
   try {
     const { id } = req.params;

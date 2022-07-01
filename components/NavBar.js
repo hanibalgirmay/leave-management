@@ -1,4 +1,4 @@
-import * as React from "react";
+import  React, {useEffect} from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -13,6 +13,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { useRouter } from "next/router";
+import axios from "axios";
 
 // const pages = ["Profile"];
 const settings = ["Profile", "Dashboard", "Logout"];
@@ -20,7 +21,9 @@ const settings = ["Profile", "Dashboard", "Logout"];
 const ResponsiveAppBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [userData, setUserData] = React.useState();
 
+  const router = useRouter();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -37,6 +40,26 @@ const ResponsiveAppBar = () => {
     setAnchorElUser(null);
   };
 
+  const getUserData = () => {
+    let { id } = JSON.parse(localStorage.getItem("leave-mng"));
+    axios.get(process.env.API_ADDRESS + "/employee/" + id)
+      .then(res => {
+        console.log(res.data)
+        setUserData(res.data);
+      }).catch(err => {
+        console.log(err);
+      });
+  };
+
+  const logout = async () => {
+    await localStorage.removeItem("leave-mng");
+    router.push('/');
+  }
+
+  useEffect(() => {
+    getUserData()
+  }, [userData])
+  
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -84,7 +107,7 @@ const ResponsiveAppBar = () => {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt={userData && userData.full_name} src="/static/images/avatar/2.jpg" />
               </IconButton>
             </Tooltip>
             <Menu
@@ -103,15 +126,26 @@ const ResponsiveAppBar = () => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
+              {/* {settings.map((setting) => ( */}
                 <MenuItem
-                  key={setting}
-                  href={setting.toLowerCase()}
-                  onClick={handleCloseUserMenu}
+                  key="profile"
+                  // onClick={handleCloseUserMenu}
                 >
-                  <Typography textAlign="center">{setting}</Typography>
+                  <Typography textAlign="center">Profile</Typography>
                 </MenuItem>
-              ))}
+                <MenuItem
+                  key="profile"
+                  // onClick={handleCloseUserMenu}
+                >
+                  <Typography textAlign="center">Dashboard</Typography>
+                </MenuItem>
+                <MenuItem
+                  key="logout"
+                  onClick={logout}
+                >
+                  <Typography textAlign="center">Logout</Typography>
+                </MenuItem>
+              {/* ))} */}
             </Menu>
           </Box>
         </Toolbar>
