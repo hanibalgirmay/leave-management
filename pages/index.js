@@ -1,8 +1,22 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import Head from "next/head";
+import Image from "next/image";
+import styles from "../styles/Home.module.css";
+import CircularProgress from "@mui/material/CircularProgress";
+import { Button, Box } from "@mui/material";
+import { useState } from "react";
+import {useRouter} from 'next/router';
+
 
 export default function Home() {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const handleLogin = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      router.push('/dashboard');
+    }, 2000);
+  };
   return (
     <div className={styles.container}>
       <Head>
@@ -12,58 +26,74 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+      <div className="container">
+        <div className="form">
+          <div className="input-field">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              placeholder="example@example.com"
+              id="email"
+              name="email"
+            />
+          </div>
+          <div className="input-field">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              placeholder="********"
+              id="password"
+              name="password"
+            />
+          </div>
+          <div className="input-field">
+            <label for="remember">
+              <input type="checkbox" name="" id="remember" />
+              Remember me
+            </label>
+          </div>
+          <div className="action">
+            <Box sx={{ m: 1, position: "relative" }}>
+              <button
+                className="btn"
+                variant="contained"
+                disabled={loading}
+                onClick={handleLogin}
+              >
+                Login
+              </button>
+              {loading && (
+                <CircularProgress
+                  size={24}
+                  sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    marginTop: "-12px",
+                    marginLeft: "-12px",
+                  }}
+                />
+              )}
+            </Box>
+            {/* <Button
+              variant="contained"
+              disabled={loading}
+              onClick={handleLogin}
+              id="btn"
+              className="btn"
+            >
+              {loading && <CircularProgress size={22} disableShrink />}
+            </Button> */}
+          </div>
         </div>
+      </div>
       </main>
 
       <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
+        <span style={{ display: "flex", gap: ".5rem" }}>
+          Develop by <a href="https://github.com/hanibalgirmay">Hanibal G.</a>
+        </span>
       </footer>
     </div>
-  )
+  );
 }
