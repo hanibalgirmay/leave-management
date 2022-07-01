@@ -20,7 +20,7 @@ const settings = ["Profile", "Dashboard", "Logout"];
 const ResponsiveAppBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const router = useRouter()
+
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -106,7 +106,7 @@ const ResponsiveAppBar = () => {
               {settings.map((setting) => (
                 <MenuItem
                   key={setting}
-                  href={router.push(setting.toLowerCase())}
+                  href={setting.toLowerCase()}
                   onClick={handleCloseUserMenu}
                 >
                   <Typography textAlign="center">{setting}</Typography>

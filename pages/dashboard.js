@@ -12,10 +12,13 @@ import {
   Container,
   Box,
   Button,
+  Typography,
+  Alert,
+  AlertTitle
 } from "@mui/material";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 
 let intialLeave = {
   leave_type: "",
@@ -23,50 +26,14 @@ let intialLeave = {
   number_of_days: 0,
   leave_start_date: "",
   leave_end_date: "",
-  description: ""
+  description: "",
 };
-
-const leaveColumns = [
-  { field: 'id', headerName: 'ID', width: 90 },
-  {
-    field: 'leave_type',
-    headerName: 'Leave Type',
-    width: 150,
-    editable: true,
-  },
-  {
-    field: 'number_of_days',
-    headerName: 'Number of Days',
-    width: 150,
-    editable: true,
-  },
-  {
-    field: 'leave_start_date',
-    headerName: 'Leave Start Date',
-    type: 'text',
-    width: 110,
-    editable: true,
-  },
-  {
-    field: 'status',
-    headerName: 'Status',
-    description: 'This column has a value getter and is not sortable.',
-    sortable: false,
-    width: 160,
-  },
-  {
-    field: "",
-    headerName:"Actions",
-    sortable: false,
-    width: 160,
-  }
-];
 
 const dashboard = () => {
   const [open, setOpen] = React.useState(false);
   const [leaves, setLeaves] = React.useState(intialLeave);
-  const [endDate, setEndDate] = useState('');
-  const [allLeaves, setAllLeavesData] = useState([]);
+  const [endDate, setEndDate] = useState("");
+  const [myLeave, setMyLeave] = useState([]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -83,63 +50,82 @@ const dashboard = () => {
 
   const calculateRemainingDays = () => {
     let _date = new Date(leaves.leave_start_date);
-    console.log("date+",leaves.leave_start_date);
-    console.log("date ",_date.toLocaleDateString());
-    if(leaves.number_of_days){
+    console.log("date+", leaves.leave_start_date);
+    console.log("date ", _date.toLocaleDateString());
+    if (leaves.number_of_days) {
       leaves.leave_end_date = _date.getDay() + leaves.number_of_days;
       let y = addDaysToDate(_date.toLocaleDateString(), leaves.number_of_days);
-      console.log("------------")
-      console.log(y.toLocaleDateString())
+      console.log("------------");
+      console.log(y.toLocaleDateString());
       setEndDate(y.toLocaleDateString());
-      console.log("------------")
-      console.log("date___",leaves.number_of_days);
-    } else{
-      alert('Enter number of days!')
+      console.log("------------");
+      console.log("date___", leaves.number_of_days);
+    } else {
+      alert("Enter number of days!");
     }
-  }
+  };
 
   const addDaysToDate = (date, days) => {
     var dt = new Date(date);
-    console.log('_', dt.toLocaleDateString())
+    console.log("_", dt.toLocaleDateString());
     dt.setDate(dt.getDate() + parseInt(days));
-    console.log('_', dt.toLocaleDateString())
+    console.log("_", dt.toLocaleDateString());
     return dt;
-  }
+  };
 
   useEffect(() => {
-    getAllLeaves();
-  }, [])
-  
+    getLeaves();
+  }, []);
+
   useEffect(() => {
-    calculateRemainingDays()
-  }, [leaves.leave_start_date])
-  
-  const getAllLeaves = async() => {
-    await axios.get(process.env.API_ADDRESS + "/leaves")
+    calculateRemainingDays();
+  }, [leaves.leave_start_date]);
+
+  // const getAllLeaves = async() => {
+  //   let _t = JSON.parse(localStorage.getItem("leave-mng"))
+  //   await axios.get(process.env.API_ADDRESS + "/leaves",{
+  //     headers:{
+  //       authorization: _t.accessToken
+  //     }
+  //   })
+  //     .then((res) => {
+  //       console.log(res.data)
+  //       setAllLeavesData(res.data);
+  //     }).catch(err => console.log(err))
+  // }
+
+  const getLeaves = async () => {
+    let _t = JSON.parse(localStorage.getItem("leave-mng"));
+    await axios
+      .get(process.env.API_ADDRESS + "/leaves/employee/" + _t.employeeID)
       .then((res) => {
-        console.log(res.data)
-        setAllLeavesData(res.data);
-      }).catch(err => console.log(err))
-  }
+        console.log(res.data);
+        setMyLeave(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
 
-  const handleSubmit = async () => { 
+  const handleSubmit = async () => {
     let _endData = {
       leave_type: leaves.leave_type,
       number_of_days: parseInt(leaves.number_of_days),
       leave_start_date: leaves.leave_start_date,
       leave_end_date: endDate,
       description: leaves.description,
-    }
-    await axios.post(process.env.API_ADDRESS + "/leaves",{
-      ..._endData
-    }).then(res => {
-      console.log(res.data);
-      toast("Leave Date Added!!!");
-    }).catch(err => {
-      console.log(err);
-    })
-    setOpen(false)
-    console.log(_endData)
+    };
+    await axios
+      .post(process.env.API_ADDRESS + "/leaves", {
+        ..._endData,
+      })
+      .then((res) => {
+        console.log(res.data);
+        toast("Leave Date Added!!!");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    setOpen(false);
+    console.log(_endData);
   };
 
   return (
@@ -176,7 +162,18 @@ const dashboard = () => {
               >
                 Request Leave
               </Button>
-              <Table data={allLeaves} columns={leaveColumns} onClick={getAllLeaves} />
+              {/* <Table data={allLeaves} columns={leaveColumns} onClick={getAllLeaves} /> */}
+            </Grid>
+            <Grid>
+              <Typography variant="p">Requested Leaves</Typography>
+              {myLeave && (
+                myLeave.map(item => (
+                  <Alert severity={item.status === "REJECTED" ? 'error' : 'info'}>
+                    <AlertTitle>Leave Status</AlertTitle>
+                    Leave application — <strong>{item.status}</strong>
+                  </Alert>
+                ))
+              )}
             </Grid>
           </Grid>
         </Container>

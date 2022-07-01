@@ -12,26 +12,30 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  role      Roles    @default(EMPLOYEE)
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  id         Int       @id @default(autoincrement())
+  username   String    @unique
+  role       Roles?    @default(EMPLOYEE)
+  password   String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @default(now())
+  employee   Employee? @relation(fields: [employeeID], references: [id])
+  employeeID Int?
 }
 
 model Employee {
-  id              Int     @id @default(autoincrement())
+  id              Int              @id @default(autoincrement())
   full_name       String
   gender          String?
   employment_date String
-  role            Roles?  @default(EMPLOYEE)
+  role            Roles?           @default(EMPLOYEE)
   leave           leave[]
+  remainingLeave  remainingLeave[]
+  User            User[]
 }
 
 model leave {
   id               Int          @id @default(autoincrement())
-  leave_type       String
+  leave_type       leaveType?   @default(SICK_LEAVE)
   status           leaveStatus? @default(PENDING)
   number_of_days   Int
   leave_start_date String
@@ -41,10 +45,24 @@ model leave {
   employeeID       Int?
 }
 
+model remainingLeave {
+  id               Int       @id @default(autoincrement())
+  employee         Employee? @relation(fields: [employeeID], references: [id])
+  employeeID       Int?
+  total_leave_days Int       @default(15)
+}
+
 enum leaveStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+enum leaveType {
+  SICK_LEAVE
+  CASUAL_LEAVE
+  PATERNITY_LEAVE
+  MATERNITY_LEAVE
 }
 
 enum Roles {
